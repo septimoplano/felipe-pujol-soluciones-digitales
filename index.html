@@ -710,8 +710,19 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <h4>¡Pago confirmado!</h4>
-      <p>Recibirás un correo con el enlace para agendar tu sesión.<br>Total cobrado: <strong id="success-total"></strong></p>
+      <p>Me pondré en contacto contigo a la brevedad para coordinar la sesión.<br>Total cobrado: <strong id="success-total"></strong></p>
       <button class="pay-btn" onclick="finishCheckout()">Volver al sitio</button>
+    </div>
+
+    <!-- Step: failed -->
+    <div data-step="failed" class="success" style="display:none">
+      <div class="success-circle" style="background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.25)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+      <h4 style="color:#ef4444">Pago no completado</h4>
+      <p id="failed-msg">El pago fue cancelado o rechazado. Puedes intentarlo nuevamente.</p>
+      <button class="pay-btn" onclick="retryPayment()">Reintentar pago</button>
+      <a style="display:block;text-align:center;margin-top:12px;font-size:13px;opacity:.6;color:var(--ink);cursor:pointer" href="https://wa.me/56934103995?text=Hola%20Felipe%2C%20tuve%20un%20problema%20con%20el%20pago" target="_blank" rel="noopener">¿Problemas? Escríbeme por WhatsApp</a>
     </div>
   </div>
 </div>
@@ -805,14 +816,12 @@
   function setStep(step) {
     document.querySelectorAll("[data-step]").forEach(el => el.style.display = "none");
     document.querySelector(`[data-step="${step}"]`).style.display = "";
-    const titles = { form: "Tus datos", redirecting: "Redirigiendo…", done: "¡Listo!" };
+    const titles = { form: "Tus datos", redirecting: "Redirigiendo…", done: "¡Listo!", failed: "Pago fallido" };
     document.getElementById("checkout-title").textContent = titles[step] || "";
     document.getElementById("checkout-close").style.display = step === "redirecting" ? "none" : "";
     const t = fmtCLP(getTotal());
-    ["form-total", "success-total"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = t;
-    });
+    const el = document.getElementById("form-total");
+    if (el) el.textContent = t;
   }
 
   function resetCheckout() {
@@ -851,6 +860,8 @@
 
   function finishCheckout() { closeCheckout(); items = []; updateBadge(); showToast("¡Compra realizada con éxito!"); }
 
+  function retryPayment() { closeCheckout(); setTimeout(() => openCheckout(), 200); }
+
   function validateForm() {
     const name  = document.getElementById("co-name").value.trim();
     const email = document.getElementById("co-email").value;
@@ -862,14 +873,19 @@
   async function checkPaymentReturn() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("payment") !== "return") return;
-    const token = params.get("token");
-    if (!token) return;
 
-    // Limpia la URL sin recargar
     history.replaceState({}, "", window.location.pathname);
-
-    // Muestra el modal con spinner mientras consultamos
     document.getElementById("checkout-overlay").classList.add("open");
+
+    const token = params.get("token");
+
+    // Sin token = pago cancelado antes de completarse
+    if (!token) {
+      setStep("failed");
+      document.getElementById("failed-msg").textContent = "Cancelaste el pago antes de completarlo. Puedes intentarlo nuevamente cuando quieras.";
+      return;
+    }
+
     setStep("redirecting");
     document.getElementById("checkout-title").textContent = "Verificando pago…";
 
@@ -881,12 +897,12 @@
         const el = document.getElementById("success-total");
         if (el) el.textContent = fmtCLP(data.amount);
       } else {
-        closeCheckout();
-        showToast("El pago no fue completado. Intenta nuevamente.");
+        setStep("failed");
+        document.getElementById("failed-msg").textContent = "El pago fue rechazado. Verifica los datos de tu tarjeta e intenta nuevamente.";
       }
     } catch {
-      closeCheckout();
-      showToast("No pudimos verificar el pago. Contáctanos por WhatsApp.");
+      setStep("failed");
+      document.getElementById("failed-msg").textContent = "No pudimos verificar el estado del pago. Si se realizó el cobro, escríbeme por WhatsApp.";
     }
   }
 
