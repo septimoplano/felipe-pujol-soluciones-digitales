@@ -657,7 +657,7 @@
       </div>
       <button class="checkout-btn" onclick="openCheckout()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Pagar con <span class="webpay-logo">webpay</span>
+        Pagar con <span class="webpay-logo">flow</span>
       </button>
     </div>
   </div>
@@ -691,50 +691,17 @@
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Total a pagar</div>
         <div class="serif" id="form-total" style="font-size:28px"></div>
       </div>
-      <button class="pay-btn" id="btn-continue" onclick="goPay()" disabled>Continuar al pago</button>
-    </div>
-
-    <!-- Step: webpay -->
-    <div data-step="webpay" class="checkout-step" style="display:none">
-      <div class="webpay-card">
-        <div class="label">PASARELA SEGURA</div>
-        <div class="title">webpay</div>
-        <div class="badges">
-          <span class="badge">VISA</span>
-          <span class="badge">MASTERCARD</span>
-          <span class="badge">REDCOMPRA</span>
-        </div>
-      </div>
-      <div class="field">
-        <label>Número de tarjeta</label>
-        <input id="co-card" type="text" placeholder="0000 0000 0000 0000" oninput="formatCard(this)">
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Vencimiento</label>
-          <input id="co-exp" type="text" placeholder="MM/AA" oninput="formatExp(this)">
-        </div>
-        <div class="field">
-          <label>CVV</label>
-          <input id="co-cvv" type="text" placeholder="123" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4);validateCard()">
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 4px">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Total</div>
-        <div class="serif" id="webpay-total" style="font-size:26px"></div>
-      </div>
-      <button class="pay-btn" id="btn-pay" onclick="submitPay()" disabled>
+      <button class="pay-btn" id="btn-continue" onclick="goPay()" disabled>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Pagar <span id="pay-amount"></span>
+        Pagar con Flow
       </button>
-      <div style="text-align:center;margin-top:14px;font-size:11px;color:#0d1f1d;opacity:.5;font-family:'JetBrains Mono',monospace">CONEXIÓN CIFRADA · TRANSBANK · WEBPAY</div>
     </div>
 
-    <!-- Step: processing -->
-    <div data-step="processing" class="processing" style="display:none">
+    <!-- Step: redirecting -->
+    <div data-step="redirecting" class="processing" style="display:none">
       <div class="spinner"></div>
-      <div class="serif" style="font-size:24px;margin-bottom:6px">Procesando pago…</div>
-      <div style="font-size:13px;opacity:.65">No cierres esta ventana.</div>
+      <div class="serif" style="font-size:24px;margin-bottom:6px">Redirigiendo a Flow…</div>
+      <div style="font-size:13px;opacity:.65">Serás llevado a la pasarela de pago segura.</div>
     </div>
 
     <!-- Step: done -->
@@ -838,28 +805,50 @@
   function setStep(step) {
     document.querySelectorAll("[data-step]").forEach(el => el.style.display = "none");
     document.querySelector(`[data-step="${step}"]`).style.display = "";
-    const titles = { form: "Tus datos", webpay: "Pago seguro", processing: "Procesando", done: "¡Listo!" };
-    document.getElementById("checkout-title").textContent = titles[step];
-    document.getElementById("checkout-close").style.display = (step === "processing" || step === "done") ? "none" : "";
+    const titles = { form: "Tus datos", redirecting: "Redirigiendo…", done: "¡Listo!" };
+    document.getElementById("checkout-title").textContent = titles[step] || "";
+    document.getElementById("checkout-close").style.display = step === "redirecting" ? "none" : "";
     const t = fmtCLP(getTotal());
-    ["form-total", "webpay-total", "pay-amount", "success-total"].forEach(id => {
+    ["form-total", "success-total"].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.textContent = t;
     });
   }
 
   function resetCheckout() {
-    ["co-name","co-email","co-phone","co-card","co-exp","co-cvv"].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
+    ["co-name","co-email","co-phone"].forEach(id => {
+      document.getElementById(id).value = "";
     });
     document.getElementById("btn-continue").disabled = true;
-    document.getElementById("btn-pay").disabled = true;
     setStep("form");
   }
 
-  function goPay()      { setStep("webpay"); }
-  function submitPay()  { setStep("processing"); setTimeout(() => setStep("done"), 1800); }
+  async function goPay() {
+    setStep("redirecting");
+    const name   = document.getElementById("co-name").value.trim();
+    const email  = document.getElementById("co-email").value.trim();
+    const phone  = document.getElementById("co-phone").value.trim();
+    const amount = getTotal();
+
+    try {
+      const res  = await fetch("/api/create-order", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name, email, phone, amount }),
+      });
+      const data = await res.json();
+      if (data.redirect) {
+        window.location.href = data.redirect;
+      } else {
+        alert("Error al conectar con Flow: " + (data.error || "intenta de nuevo"));
+        setStep("form");
+      }
+    } catch {
+      alert("Error de red. Verifica tu conexión e intenta de nuevo.");
+      setStep("form");
+    }
+  }
+
   function finishCheckout() { closeCheckout(); items = []; updateBadge(); showToast("¡Compra realizada con éxito!"); }
 
   function validateForm() {
@@ -869,24 +858,39 @@
     document.getElementById("btn-continue").disabled = !(name && email.includes("@") && phone.length >= 8);
   }
 
-  function validateCard() {
-    const card = document.getElementById("co-card").value.replace(/\s/g, "");
-    const exp  = document.getElementById("co-exp").value;
-    const cvv  = document.getElementById("co-cvv").value;
-    document.getElementById("btn-pay").disabled = !(card.length >= 12 && exp.length >= 4 && cvv.length >= 3);
+  /* ── Retorno desde Flow ── */
+  async function checkPaymentReturn() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") !== "return") return;
+    const token = params.get("token");
+    if (!token) return;
+
+    // Limpia la URL sin recargar
+    history.replaceState({}, "", window.location.pathname);
+
+    // Muestra el modal con spinner mientras consultamos
+    document.getElementById("checkout-overlay").classList.add("open");
+    setStep("redirecting");
+    document.getElementById("checkout-title").textContent = "Verificando pago…";
+
+    try {
+      const res  = await fetch(`/api/status?token=${token}`);
+      const data = await res.json();
+      if (data.status === 2) {
+        setStep("done");
+        const el = document.getElementById("success-total");
+        if (el) el.textContent = fmtCLP(data.amount);
+      } else {
+        closeCheckout();
+        showToast("El pago no fue completado. Intenta nuevamente.");
+      }
+    } catch {
+      closeCheckout();
+      showToast("No pudimos verificar el pago. Contáctanos por WhatsApp.");
+    }
   }
 
-  function formatCard(el) {
-    el.value = el.value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
-    validateCard();
-  }
-
-  function formatExp(el) {
-    let d = el.value.replace(/\D/g, "").slice(0, 4);
-    if (d.length >= 3) d = d.slice(0, 2) + "/" + d.slice(2);
-    el.value = d;
-    validateCard();
-  }
+  checkPaymentReturn();
 
   /* ── Toast ── */
   function showToast(msg) {

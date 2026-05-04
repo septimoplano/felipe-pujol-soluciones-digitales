@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#5eead4" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dot" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#14756f"/>
+      <stop offset="100%" stop-color="#2dd4bf"/>
+    </linearGradient>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+
+  <!-- glow exterior -->
+  <circle cx="250" cy="250" r="180" fill="url(#glow)" filter="url(#blur)"/>
+
+  <!-- halo suave -->
+  <circle cx="250" cy="250" r="130" fill="#2dd4bf" opacity="0.12"/>
+
+  <!-- punto principal -->
+  <circle cx="250" cy="250" r="90" fill="url(#dot)"/>
+
+  <!-- brillo interno -->
+  <circle cx="220" cy="220" r="30" fill="white" opacity="0.18"/>
+</svg>
