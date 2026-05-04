@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     amount:          String(amount),
     email,
     urlConfirmation: `${SITE_URL}/api/confirm`,
-    urlReturn:       `${SITE_URL}/?payment=return`,
+    urlReturn:       `${SITE_URL}/api/return`,
   };
   params.s = sign(params);
 
