@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Felipe Pujol — Soluciones Digitales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1f1d;
+    --ink-soft: #1a2f2c;
+    --teal-deep: #0e3b3a;
+    --teal: #14756f;
+    --teal-bright: #2dd4bf;
+    --teal-glow: #5eead4;
+    --cream: #f4ede4;
+    --cream-warm: #ede2d2;
+    --cream-soft: #faf6ef;
+    --line: rgba(13,31,29,.12);
+    --grad-hero: linear-gradient(135deg,#0e3b3a 0%,#14756f 35%,#2dd4bf 75%,#5eead4 100%);
+    --grad-warm: linear-gradient(135deg,#f4ede4 0%,#ede2d2 50%,#d9ccb8 100%);
+    --grad-pill: linear-gradient(120deg,#14756f 0%,#2dd4bf 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    font-feature-settings: "ss01","cv11";
+  }
+  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; letter-spacing: -.01em; }
+  .mono  { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── Navbar ── */
+  .nav {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 100; display: flex; align-items: center; gap: 8px;
+    background: rgba(250,246,239,.75); backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(13,31,29,.08);
+    padding: 8px 8px 8px 20px; border-radius: 999px;
+    box-shadow: 0 8px 32px rgba(13,31,29,.08);
+  }
+  .nav-brand {
+    font-family: 'Instrument Serif', serif; font-size: 18px;
+    margin-right: 8px; display: flex; align-items: center; gap: 8px;
+  }
+  .nav-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--grad-pill);
+    box-shadow: 0 0 12px rgba(45,212,191,.6);
+    flex-shrink: 0;
+  }
+  .nav-links { display: flex; gap: 4px; align-items: center; }
+  .nav-link {
+    color: var(--ink); text-decoration: none;
+    font-size: 13.5px; font-weight: 500; padding: 8px 14px;
+    border-radius: 999px; transition: background .2s; cursor: pointer;
+    background: transparent; border: none; font-family: inherit;
+  }
+  .nav-link:hover { background: rgba(13,31,29,.06); }
+
+  .btn-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px 9px 18px; border-radius: 999px;
+    background: var(--grad-pill); color: var(--cream-soft);
+    border: none; font-family: inherit; font-weight: 600; font-size: 13.5px;
+    cursor: pointer; text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 14px rgba(20,117,111,.3);
+  }
+  .btn-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(20,117,111,.4); }
+  .btn-cta svg { width: 14px; height: 14px; }
+
+  .cart-btn {
+    position: relative; width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid rgba(13,31,29,.12); background: transparent;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .cart-btn:hover { background: rgba(13,31,29,.05); }
+  .cart-btn svg { width: 16px; height: 16px; color: var(--ink); }
+  .cart-badge {
+    position: absolute; top: -2px; right: -2px;
+    background: var(--teal-bright); color: var(--ink);
+    font-size: 10px; font-weight: 700;
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--cream-soft);
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh; background: var(--grad-hero);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center;
+    padding: 110px 5vw 180px; color: var(--cream-soft);
+  }
+  .hero::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 220px;
+    background: linear-gradient(180deg,rgba(244,237,228,0) 0%,rgba(244,237,228,.4) 55%,var(--cream) 100%);
+    pointer-events: none; z-index: 1;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 20%,rgba(94,234,212,.4),transparent 50%),
+                radial-gradient(ellipse at 10% 90%,rgba(14,59,58,.6),transparent 50%);
+    pointer-events: none;
+  }
+  .hero-grain {
+    position: absolute; inset: 0; opacity: .08; pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  .hero-inner {
+    position: relative; z-index: 2; width: 100%;
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: 60px; align-items: center;
+  }
+  .hero-inner-solo { display: block; max-width: 1400px; text-align: left; }
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .hero { padding: 120px 24px 60px; }
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 10px 20px 10px 12px;
+    background: rgba(250,246,239,.12); border: 1px solid rgba(250,246,239,.2);
+    border-radius: 999px; font-size: 13px; letter-spacing: .04em;
+    text-transform: uppercase; margin-bottom: 32px; backdrop-filter: blur(10px);
+  }
+  .hero-eyebrow .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--teal-glow); box-shadow: 0 0 0 0 var(--teal-glow);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(94,234,212,.6); }
+    70%  { box-shadow: 0 0 0 10px rgba(94,234,212,0); }
+    100% { box-shadow: 0 0 0 0 rgba(94,234,212,0); }
+  }
+  .hero h1 {
+    font-family: 'Instrument Serif', serif; font-weight: 400;
+    font-size: clamp(56px,9.5vw,160px); line-height: .94;
+    letter-spacing: -.03em; margin-bottom: 40px;
+  }
+  .hero h1 .it { font-style: italic; color: var(--teal-glow); }
+  .hero h1 .underline { display: inline-block; position: relative; }
+  .hero h1 .underline::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 4px;
+    height: 6px; background: var(--teal-glow); opacity: .4; border-radius: 4px;
+  }
+  .hero p.lead {
+    font-size: 22px; line-height: 1.45; max-width: 640px;
+    color: rgba(250,246,239,.85); margin-bottom: 48px;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .hero-actions-right { justify-content: flex-end; }
+  @media (max-width: 900px) { .hero-actions-right { justify-content: flex-start; } }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 28px; border-radius: 999px;
+    background: rgba(13,31,29,.25); color: var(--cream-soft);
+    border: 1px solid rgba(250,246,239,.45); font-weight: 600; font-size: 15px;
+    cursor: pointer; text-decoration: none; font-family: inherit;
+    transition: background .2s, border-color .2s; backdrop-filter: blur(8px);
+  }
+  .btn-ghost:hover { background: rgba(13,31,29,.4); border-color: var(--cream-soft); }
+
+  .btn-light {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 16px 28px; border-radius: 999px;
+    background: var(--cream-soft); color: var(--ink);
+    border: none; font-weight: 600; font-size: 15px;
+    cursor: pointer; text-decoration: none; font-family: inherit;
+    transition: transform .2s;
+  }
+  .btn-light:hover { transform: translateY(-1px); }
+  .btn-light svg { width: 14px; height: 14px; }
+
+  /* ── Marquee ── */
+  .marquee {
+    background: var(--ink); color: var(--cream); padding: 22px 0; overflow: hidden;
+    border-top: 1px solid rgba(94,234,212,.1); border-bottom: 1px solid rgba(94,234,212,.1);
+  }
+  .marquee-track {
+    display: flex; gap: 60px; white-space: nowrap;
+    animation: scroll 40s linear infinite; width: max-content;
+  }
+  .marquee span {
+    font-family: 'Instrument Serif', serif; font-size: 36px;
+    display: inline-flex; align-items: center; gap: 60px;
+  }
+  .marquee span::after { content: '✦'; color: var(--teal-bright); font-size: 24px; }
+  @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── Section base ── */
+  section.block { padding: 120px 0; width: 100%; }
+  section.block > * {
+    max-width: 1280px; margin-left: auto; margin-right: auto;
+    padding-left: 6vw; padding-right: 6vw; display: block;
+  }
+  section.block .portfolio-grid { display: grid; }
+  @media (max-width: 700px) {
+    section.block { padding: 80px 0; }
+    section.block > * { padding-left: 24px; padding-right: 24px; }
+  }
+  .section-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--teal); margin-bottom: 20px;
+  }
+  .section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--teal); }
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(40px,6vw,80px); line-height: .98;
+    letter-spacing: -.02em; margin-bottom: 40px; max-width: 18ch;
+  }
+  .section-title .it { font-style: italic; }
+  .section-title .grad {
+    background: var(--grad-pill); -webkit-background-clip: text;
+    background-clip: text; color: transparent;
+  }
+
+  /* ── Portafolio ── */
+  #portafolio { background: var(--cream); }
+  .portfolio-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 40px; }
+  @media (max-width: 900px) { .portfolio-grid { grid-template-columns: 1fr; } }
+  .pf-card {
+    background: var(--cream-soft); border-radius: 24px; overflow: hidden;
+    cursor: pointer; text-decoration: none; color: inherit;
+    border: 1px solid var(--line);
+    transition: transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s; display: block;
+  }
+  .pf-card:hover { transform: translateY(-6px); box-shadow: 0 24px 50px rgba(13,31,29,.15); }
+  .pf-thumb { aspect-ratio: 4/3; position: relative; overflow: hidden; background: var(--grad-hero); }
+  .pf-thumb-inner {
+    position: absolute; inset: 16px; border-radius: 14px; overflow: hidden;
+    background: white; box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+    display: flex; flex-direction: column;
+  }
+  .pf-thumb-bar {
+    height: 18px; background: #f0f0f0; border-bottom: 1px solid #e5e5e5;
+    display: flex; align-items: center; gap: 4px; padding: 0 8px; flex-shrink: 0;
+  }
+  .pf-thumb-bar i { width: 6px; height: 6px; border-radius: 50%; background: #ccc; display: block; }
+  .pf-thumb-canvas {
+    flex: 1; background-size: cover; background-position: center;
+    transition: transform .6s cubic-bezier(.2,.8,.2,1); transform-origin: center;
+  }
+  #portafolio .pf-card:nth-child(1) .pf-thumb-canvas,
+  #portafolio .pf-card:nth-child(2) .pf-thumb-canvas { background-position: left center; }
+  .pf-card:hover .pf-thumb-canvas { transform: scale(1.04); }
+  .pf-meta { padding: 24px 26px 28px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .pf-name { font-family: 'Instrument Serif', serif; font-size: 26px; line-height: 1.1; margin-bottom: 4px; }
+  .pf-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--teal); text-transform: uppercase; letter-spacing: .08em; }
+  .pf-arrow {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--ink);
+    color: var(--cream-soft); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background .2s, transform .2s;
+  }
+  .pf-card:hover .pf-arrow { background: var(--teal); transform: rotate(-45deg); }
+  .pf-arrow svg { width: 14px; height: 14px; }
+
+  /* ── Tienda ── */
+  #tienda { background: var(--ink); color: var(--cream-soft); position: relative; overflow: hidden; }
+  #tienda .glow-1 {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle,rgba(45,212,191,.25),transparent 60%);
+    top: -200px; right: -200px; pointer-events: none;
+  }
+  #tienda .glow-2 {
+    position: absolute; width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle,rgba(20,117,111,.3),transparent 60%);
+    bottom: -150px; left: -150px; pointer-events: none;
+  }
+  #tienda .section-eyebrow { color: var(--teal-glow); }
+  #tienda .section-eyebrow::before { background: var(--teal-glow); }
+  .product {
+    margin-top: 40px; display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 60px; align-items: center; position: relative;
+  }
+  @media (max-width: 900px) { .product { grid-template-columns: 1fr; gap: 40px; } }
+  .product-visual { aspect-ratio: 1; position: relative; display: flex; align-items: center; justify-content: center; }
+  .product-portrait {
+    position: relative; width: 88%; aspect-ratio: 1; border-radius: 50%;
+    overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.4);
+    border: 4px solid rgba(94,234,212,.3);
+    transition: transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .product-portrait:hover { transform: scale(1.02); }
+  .product-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .product-portrait::after {
+    content: '1 hora · 1:1'; position: absolute; bottom: 24px; left: 50%;
+    transform: translateX(-50%); background: rgba(13,31,29,.75); backdrop-filter: blur(10px);
+    color: var(--cream-soft); padding: 9px 18px; border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+  }
+  .product-info h3 { font-family: 'Instrument Serif', serif; font-size: clamp(38px,5vw,64px); line-height: 1.02; margin-bottom: 20px; letter-spacing: -.02em; }
+  .product-info h3 .grad { background: linear-gradient(120deg,var(--teal-glow),var(--teal-bright)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .product-info p { color: rgba(250,246,239,.75); font-size: 16px; line-height: 1.6; margin-bottom: 28px; max-width: 480px; }
+  .product-features { list-style: none; margin-bottom: 32px; display: grid; gap: 12px; }
+  .product-features li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: rgba(250,246,239,.85); }
+  .product-features li svg { width: 16px; height: 16px; color: var(--teal-glow); flex-shrink: 0; }
+  .product-price { display: flex; align-items: baseline; gap: 14px; margin-bottom: 28px; }
+  .product-price .amount { font-family: 'Instrument Serif', serif; font-size: 56px; line-height: 1; background: linear-gradient(120deg,var(--cream-soft),var(--teal-glow)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .product-price .unit { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .1em; color: rgba(250,246,239,.5); text-transform: uppercase; }
+  .add-cart {
+    display: inline-flex; align-items: center; gap: 12px; padding: 16px 28px;
+    border-radius: 999px; background: var(--grad-pill); color: var(--cream-soft);
+    border: none; font-family: inherit; font-weight: 600; font-size: 15px; cursor: pointer;
+    transition: transform .2s, box-shadow .2s; box-shadow: 0 14px 30px rgba(45,212,191,.3);
+  }
+  .add-cart:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(45,212,191,.45); }
+  .add-cart svg { width: 16px; height: 16px; }
+
+  /* ── Process ── */
+  .process { background: var(--cream); padding: 100px 6vw; position: relative; }
+  .process-inner { max-width: 1280px; margin: 0 auto; }
+  .process-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 32px; margin-top: 50px; }
+  @media (max-width: 800px) { .process-grid { grid-template-columns: repeat(2,1fr); } }
+  .process-step { border-top: 1px solid var(--line); padding-top: 22px; }
+  .process-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--teal); margin-bottom: 18px; }
+  .process-name { font-family: 'Instrument Serif', serif; font-size: 26px; margin-bottom: 10px; }
+  .process-step p { font-size: 14px; line-height: 1.55; color: var(--ink-soft); opacity: .75; }
+
+  /* ── Footer ── */
+  footer { background: var(--ink); color: var(--cream-soft); padding: 80px 6vw 40px; }
+  .foot-inner { max-width: 1280px; margin: 0 auto; }
+  .foot-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; padding-bottom: 60px; border-bottom: 1px solid rgba(250,246,239,.1); }
+  @media (max-width: 800px) { .foot-top { grid-template-columns: 1fr; } }
+  .foot-headline { font-family: 'Instrument Serif', serif; font-size: clamp(36px,5vw,56px); line-height: 1; letter-spacing: -.02em; }
+  .foot-headline .it { font-style: italic; color: var(--teal-glow); }
+  .foot-col h5 { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--teal-glow); margin-bottom: 16px; font-weight: 500; }
+  .foot-col a { display: block; color: rgba(250,246,239,.7); text-decoration: none; font-size: 14px; margin-bottom: 8px; transition: color .2s; }
+  .foot-col a:hover { color: var(--teal-glow); }
+  .foot-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 28px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .05em; color: rgba(250,246,239,.5); }
+
+  /* ── Modals ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(13,31,29,.6);
+    backdrop-filter: blur(8px); z-index: 200;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--cream-soft); border-radius: 24px;
+    width: 100%; max-width: 460px; max-height: 90vh; overflow: auto;
+    transform: translateY(20px) scale(.98);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 40px 100px rgba(0,0,0,.4);
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-head { padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+  .modal-head h4 { font-family: 'Instrument Serif', serif; font-size: 24px; font-weight: 400; }
+  .modal-close { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .modal-close svg { width: 14px; height: 14px; }
+  .cart-empty { padding: 60px 28px; text-align: center; color: var(--ink-soft); opacity: .7; }
+  .cart-empty svg { width: 48px; height: 48px; margin-bottom: 16px; color: var(--teal); }
+  .cart-item { padding: 24px 28px; display: flex; gap: 16px; align-items: center; border-bottom: 1px solid var(--line); }
+  .cart-item-img { width: 64px; height: 64px; border-radius: 14px; background: var(--grad-hero); flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--cream-soft); }
+  .cart-item-img svg { width: 24px; height: 24px; }
+  .cart-item-meta { flex: 1; }
+  .cart-item-meta .name { font-family: 'Instrument Serif', serif; font-size: 18px; margin-bottom: 4px; }
+  .cart-item-meta .price { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--teal); }
+  .qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .qty button { width: 28px; height: 28px; border: none; background: transparent; cursor: pointer; color: var(--ink); font-size: 14px; }
+  .qty button:hover { background: rgba(13,31,29,.06); }
+  .qty span { padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px; min-width: 30px; text-align: center; }
+  .cart-total { padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; }
+  .cart-total .lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); opacity: .7; }
+  .cart-total .amt { font-family: 'Instrument Serif', serif; font-size: 32px; }
+  .checkout-btn { margin: 0 28px 28px; width: calc(100% - 56px); padding: 16px; border-radius: 14px; background: var(--ink); color: var(--cream-soft); border: none; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background .2s; }
+  .checkout-btn:hover { background: var(--teal-deep); }
+  .webpay-logo { background: linear-gradient(135deg,#ee3424,#c91e10); color: white; padding: 3px 8px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+
+  /* Checkout steps */
+  .checkout-step { padding: 28px; }
+  .checkout-step .field { margin-bottom: 16px; }
+  .checkout-step label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); opacity: .7; margin-bottom: 6px; }
+  .checkout-step input { width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: white; font-family: inherit; font-size: 14px; color: var(--ink); outline: none; transition: border-color .2s; }
+  .checkout-step input:focus { border-color: var(--teal); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .webpay-card { background: linear-gradient(135deg,#ee3424,#b81808); color: white; border-radius: 18px; padding: 24px; margin-bottom: 20px; box-shadow: 0 14px 30px rgba(238,52,36,.25); position: relative; overflow: hidden; }
+  .webpay-card::before { content: ''; position: absolute; width: 220px; height: 220px; border-radius: 50%; background: rgba(255,255,255,.08); top: -80px; right: -60px; }
+  .webpay-card .label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: .1em; opacity: .8; margin-bottom: 8px; }
+  .webpay-card .title { font-family: 'Instrument Serif', serif; font-size: 26px; }
+  .webpay-card .badges { margin-top: 16px; display: flex; gap: 6px; }
+  .webpay-card .badge { background: rgba(255,255,255,.15); padding: 4px 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+  .pay-btn { width: 100%; padding: 16px; border-radius: 14px; background: var(--grad-pill); color: var(--cream-soft); border: none; font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer; margin-top: 8px; transition: transform .2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .pay-btn:hover { transform: translateY(-1px); }
+  .pay-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .processing { padding: 60px 28px; text-align: center; }
+  .spinner { width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--teal); margin: 0 auto 20px; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .success { padding: 50px 28px; text-align: center; }
+  .success-circle { width: 80px; height: 80px; border-radius: 50%; background: var(--grad-pill); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 14px 30px rgba(45,212,191,.4); }
+  .success-circle svg { width: 32px; height: 32px; }
+  .success h4 { font-family: 'Instrument Serif', serif; font-size: 32px; margin-bottom: 8px; }
+  .success p { color: var(--ink-soft); opacity: .75; font-size: 14px; margin-bottom: 20px; }
+
+  /* ── WhatsApp FAB ── */
+  .fab { position: fixed; bottom: 24px; right: 24px; width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg,#25D366,#128C7E); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; z-index: 90; box-shadow: 0 14px 30px rgba(37,211,102,.4); transition: transform .25s; animation: bobble 3s ease-in-out infinite; }
+  .fab:hover { transform: scale(1.08); animation: none; }
+  .fab svg { width: 28px; height: 28px; }
+  @keyframes bobble { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  /* ── Toast ── */
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--ink); color: var(--cream-soft); padding: 14px 22px; border-radius: 14px; font-size: 14px; z-index: 150; box-shadow: 0 14px 30px rgba(0,0,0,.3); transition: transform .3s cubic-bezier(.2,.8,.2,1); display: flex; align-items: center; gap: 10px; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast svg { width: 16px; height: 16px; color: var(--teal-glow); }
+
+  /* ── Responsive nav ── */
+  @media (max-width: 640px) {
+    .nav { left: 12px; right: 12px; transform: none; padding: 6px 6px 6px 14px; }
+    .nav-brand span:not(.nav-dot) { display: none; }
+    .nav-link { padding: 6px 10px; font-size: 12px; }
+    .btn-cta { padding: 8px 12px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <div class="nav-brand">
+    <span class="nav-dot"></span>
+    <span>Felipe Pujol</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#home">Home</a>
+    <a class="nav-link" href="#portafolio">Portafolio</a>
+    <a class="nav-link" href="#tienda">Tienda</a>
+  </div>
+  <button class="cart-btn" onclick="openCart()" aria-label="Carrito">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+  </button>
+  <a class="btn-cta" href="https://wa.me/56900000000?text=Hola%20Felipe%2C%20quiero%20digitalizar%20mi%20negocio" target="_blank" rel="noopener">
+    Contáctame
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+  </a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="home">
+  <div class="hero-grain"></div>
+  <div class="hero-inner hero-inner-solo">
+    <div class="hero-eyebrow">
+      <span class="pulse"></span>
+      Disponible para nuevos proyectos · Mayo 2026
+    </div>
+    <h1 style="text-align:left">
+      ¿Buscas <span class="it">digitalizar</span><br>
+      tu negocio?<br>
+      <span class="underline">Estás en el lugar correcto.</span>
+    </h1>
+    <p class="lead">
+      Felipe Pujol, consultor digital.<br>
+      Especialización en desarrollo web — sitios que convierten visitas en clientes y procesos en ingresos.
+    </p>
+    <div class="hero-actions hero-actions-right">
+      <a class="btn-ghost" href="#portafolio">Ver portafolio</a>
+      <a class="btn-light" href="https://wa.me/56900000000?text=Hola%20Felipe%2C%20quiero%20digitalizar%20mi%20negocio" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        Conversemos
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── MARQUEE ── -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Desarrollo web</span><span>E-commerce</span><span>Landing pages</span>
+    <span>Branding digital</span><span>Automatización</span><span>Asesoría 1:1</span>
+    <span>Desarrollo web</span><span>E-commerce</span><span>Landing pages</span>
+    <span>Branding digital</span><span>Automatización</span><span>Asesoría 1:1</span>
+  </div>
+</div>
+
+<!-- ── PORTAFOLIO ── -->
+<section class="block" id="portafolio">
+  <div>
+    <div class="section-eyebrow">Portafolio · Trabajo reciente</div>
+    <h2 class="section-title">Tu negocio podría<br>verse así<span class="grad">.</span></h2>
+    <div class="portfolio-grid">
+
+      <a href="https://default-restaurante.vercel.app" target="_blank" rel="noopener" class="pf-card">
+        <div class="pf-thumb">
+          <div class="pf-thumb-inner">
+            <div class="pf-thumb-bar"><i></i><i></i><i></i></div>
+            <div class="pf-thumb-canvas" style="background-image:url('assets/preview-brasas.png')"></div>
+          </div>
+        </div>
+        <div class="pf-meta">
+          <div>
+            <div class="pf-name">Brasas & Mar</div>
+            <div class="pf-tag">Restaurante · Reservas</div>
+          </div>
+          <div class="pf-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://default-estetica.vercel.app" target="_blank" rel="noopener" class="pf-card">
+        <div class="pf-thumb">
+          <div class="pf-thumb-inner">
+            <div class="pf-thumb-bar"><i></i><i></i><i></i></div>
+            <div class="pf-thumb-canvas" style="background-image:url('assets/preview-lumiere.png')"></div>
+          </div>
+        </div>
+        <div class="pf-meta">
+          <div>
+            <div class="pf-name">Lumière</div>
+            <div class="pf-tag">Clínica estética · Citas online</div>
+          </div>
+          <div class="pf-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://default-barberia.vercel.app" target="_blank" rel="noopener" class="pf-card">
+        <div class="pf-thumb">
+          <div class="pf-thumb-inner">
+            <div class="pf-thumb-bar"><i></i><i></i><i></i></div>
+            <div class="pf-thumb-canvas" style="background-image:url('assets/preview-barber.png')"></div>
+          </div>
+        </div>
+        <div class="pf-meta">
+          <div>
+            <div class="pf-name">The Barber Co.</div>
+            <div class="pf-tag">Barbería · Agendamiento</div>
+          </div>
+          <div class="pf-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── TIENDA ── -->
+<section class="block" id="tienda">
+  <span class="glow-1"></span>
+  <span class="glow-2"></span>
+  <div>
+    <div class="section-eyebrow">Tienda · Servicios 1:1</div>
+    <h2 class="section-title">
+      Una hora puede<br>cambiar el rumbo<br><span class="it grad">de tu proyecto.</span>
+    </h2>
+    <div class="product">
+      <div class="product-visual">
+        <div class="product-portrait">
+          <img src="assets/pfp.png" alt="Felipe Pujol" />
+        </div>
+      </div>
+      <div class="product-info">
+        <h3>Asesoría conmigo <span class="grad">1 hora.</span></h3>
+        <p>Una sesión enfocada en tu negocio. Revisamos juntos tu situación digital, identificamos oportunidades y armamos un plan claro que puedas ejecutar la misma semana.</p>
+        <ul class="product-features">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Diagnóstico de tu presencia digital actual
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Recomendaciones priorizadas y accionables
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Reunión vía Google Meet, agendamiento flexible
+          </li>
+        </ul>
+        <div class="product-price">
+          <span class="amount">$20.000</span>
+          <span class="unit">/ sesión 60 min</span>
+        </div>
+        <button class="add-cart" onclick="addProduct()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          Agregar al carrito
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESO ── -->
+<section class="process">
+  <div class="process-inner">
+    <div class="section-eyebrow">Proceso · Cómo trabajamos</div>
+    <h2 class="section-title" style="margin-bottom:0">Simple, claro<br>y <span class="it">sin vueltas.</span></h2>
+    <div class="process-grid">
+      <div class="process-step">
+        <div class="process-num">01</div>
+        <div class="process-name">Conversamos</div>
+        <p>Una llamada breve para entender qué necesita tu negocio y dónde están los cuellos de botella.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">02</div>
+        <div class="process-name">Propuesta</div>
+        <p>Te envío un plan claro: alcance, tiempos y precio. Sin letra chica, sin sorpresas.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">03</div>
+        <div class="process-name">Construyo</div>
+        <p>Diseño y desarrollo con avances semanales para que veas el progreso en tiempo real.</p>
+      </div>
+      <div class="process-step">
+        <div class="process-num">04</div>
+        <div class="process-name">Lanzas</div>
+        <p>Sitio en producción, dominio configurado, métricas activas y soporte posterior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <div class="foot-headline">¿Hablamos<br>de tu <span class="it">próximo</span><br>proyecto?</div>
+        <a class="btn-cta" style="margin-top:28px;display:inline-flex" href="https://wa.me/56900000000?text=Hola%20Felipe%2C%20quiero%20digitalizar%20mi%20negocio" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          Escríbeme por WhatsApp
+        </a>
+      </div>
+      <div class="foot-col">
+        <h5>Navegación</h5>
+        <a href="#home">Home</a>
+        <a href="#portafolio">Portafolio</a>
+        <a href="#tienda">Tienda</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contacto</h5>
+        <a href="https://wa.me/56900000000?text=Hola%20Felipe%2C%20quiero%20digitalizar%20mi%20negocio" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="#">Instagram</a>
+        <a href="mailto:fpujoln@gmail.com">fpujoln@gmail.com</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Felipe Pujol · Soluciones Digitales</span>
+      <span>Hecho en Concepción, Chile</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── WA FAB ── -->
+<a class="fab" href="https://wa.me/56900000000?text=Hola%20Felipe%2C%20quiero%20digitalizar%20mi%20negocio" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+</a>
+
+<!-- ── CART MODAL ── -->
+<div class="modal-overlay" id="cart-overlay" onclick="closeCart()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h4>Tu carrito</h4>
+      <button class="modal-close" onclick="closeCart()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="cart-items"></div>
+    <div id="cart-total-section" style="display:none">
+      <div class="cart-total">
+        <div>
+          <div class="lbl">Total</div>
+          <div class="amt" id="cart-total-amt"></div>
+        </div>
+      </div>
+      <button class="checkout-btn" onclick="openCheckout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Pagar con <span class="webpay-logo">webpay</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHECKOUT MODAL ── -->
+<div class="modal-overlay" id="checkout-overlay" onclick="closeCheckout()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h4 id="checkout-title">Tus datos</h4>
+      <button class="modal-close" id="checkout-close" onclick="closeCheckout()" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Step: form -->
+    <div data-step="form" class="checkout-step">
+      <div class="field">
+        <label>Nombre</label>
+        <input id="co-name" type="text" placeholder="Tu nombre completo" oninput="validateForm()">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input id="co-email" type="email" placeholder="tu@email.com" oninput="validateForm()">
+      </div>
+      <div class="field">
+        <label>Teléfono / WhatsApp</label>
+        <input id="co-phone" type="tel" placeholder="+56 9 1234 5678" oninput="validateForm()">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 4px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Total a pagar</div>
+        <div class="serif" id="form-total" style="font-size:28px"></div>
+      </div>
+      <button class="pay-btn" id="btn-continue" onclick="goPay()" disabled>Continuar al pago</button>
+    </div>
+
+    <!-- Step: webpay -->
+    <div data-step="webpay" class="checkout-step" style="display:none">
+      <div class="webpay-card">
+        <div class="label">PASARELA SEGURA</div>
+        <div class="title">webpay</div>
+        <div class="badges">
+          <span class="badge">VISA</span>
+          <span class="badge">MASTERCARD</span>
+          <span class="badge">REDCOMPRA</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Número de tarjeta</label>
+        <input id="co-card" type="text" placeholder="0000 0000 0000 0000" oninput="formatCard(this)">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Vencimiento</label>
+          <input id="co-exp" type="text" placeholder="MM/AA" oninput="formatExp(this)">
+        </div>
+        <div class="field">
+          <label>CVV</label>
+          <input id="co-cvv" type="text" placeholder="123" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4);validateCard()">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 4px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6">Total</div>
+        <div class="serif" id="webpay-total" style="font-size:26px"></div>
+      </div>
+      <button class="pay-btn" id="btn-pay" onclick="submitPay()" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Pagar <span id="pay-amount"></span>
+      </button>
+      <div style="text-align:center;margin-top:14px;font-size:11px;color:#0d1f1d;opacity:.5;font-family:'JetBrains Mono',monospace">CONEXIÓN CIFRADA · TRANSBANK · WEBPAY</div>
+    </div>
+
+    <!-- Step: processing -->
+    <div data-step="processing" class="processing" style="display:none">
+      <div class="spinner"></div>
+      <div class="serif" style="font-size:24px;margin-bottom:6px">Procesando pago…</div>
+      <div style="font-size:13px;opacity:.65">No cierres esta ventana.</div>
+    </div>
+
+    <!-- Step: done -->
+    <div data-step="done" class="success" style="display:none">
+      <div class="success-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h4>¡Pago confirmado!</h4>
+      <p>Recibirás un correo con el enlace para agendar tu sesión.<br>Total cobrado: <strong id="success-total"></strong></p>
+      <button class="pay-btn" onclick="finishCheckout()">Volver al sitio</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+  const WA      = "https://wa.me/56900000000?text=Hola%20Felipe%2C%20quiero%20digitalizar%20mi%20negocio";
+  const PRODUCT = { id: "asesoria-1h", name: "Asesoría 1 hora", price: 20000 };
+  const fmtCLP  = n => "$" + n.toLocaleString("es-CL");
+
+  let items = [];
+  let toastTimer;
+
+  const getTotal = () => items.reduce((s, it) => s + it.price * it.qty, 0);
+  const getCount = () => items.reduce((s, it) => s + it.qty, 0);
+
+  /* ── Cart ── */
+  function addProduct() {
+    const found = items.find(it => it.id === PRODUCT.id);
+    if (found) found.qty++;
+    else items.push({ ...PRODUCT, qty: 1 });
+    updateBadge();
+    showToast("Asesoría agregada al carrito");
+  }
+
+  function inc(id) {
+    const it = items.find(i => i.id === id);
+    if (it) { it.qty++; renderCartItems(); updateBadge(); }
+  }
+
+  function dec(id) {
+    const it = items.find(i => i.id === id);
+    if (!it) return;
+    it.qty--;
+    if (it.qty <= 0) items = items.filter(i => i.id !== id);
+    renderCartItems();
+    updateBadge();
+  }
+
+  function updateBadge() {
+    const badge = document.getElementById("cart-badge");
+    const count = getCount();
+    badge.textContent = count;
+    badge.style.display = count > 0 ? "flex" : "none";
+  }
+
+  function renderCartItems() {
+    const container   = document.getElementById("cart-items");
+    const totalSec    = document.getElementById("cart-total-section");
+    const CLOCK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+
+    if (!items.length) {
+      container.innerHTML = `<div class="cart-empty">${CLOCK}<div>Tu carrito está vacío.</div></div>`;
+      totalSec.style.display = "none";
+      return;
+    }
+
+    container.innerHTML = items.map(it => `
+      <div class="cart-item">
+        <div class="cart-item-img">${CLOCK}</div>
+        <div class="cart-item-meta">
+          <div class="name">${it.name}</div>
+          <div class="price">${fmtCLP(it.price)} c/u</div>
+        </div>
+        <div class="qty">
+          <button onclick="dec('${it.id}')">−</button>
+          <span>${it.qty}</span>
+          <button onclick="inc('${it.id}')">+</button>
+        </div>
+      </div>`).join("");
+
+    document.getElementById("cart-total-amt").textContent = fmtCLP(getTotal());
+    totalSec.style.display = "";
+  }
+
+  function openCart()  { renderCartItems(); document.getElementById("cart-overlay").classList.add("open"); }
+  function closeCart() { document.getElementById("cart-overlay").classList.remove("open"); }
+
+  /* ── Checkout ── */
+  function openCheckout() {
+    closeCart();
+    setTimeout(() => { resetCheckout(); document.getElementById("checkout-overlay").classList.add("open"); }, 200);
+  }
+  function closeCheckout() { document.getElementById("checkout-overlay").classList.remove("open"); }
+
+  function setStep(step) {
+    document.querySelectorAll("[data-step]").forEach(el => el.style.display = "none");
+    document.querySelector(`[data-step="${step}"]`).style.display = "";
+    const titles = { form: "Tus datos", webpay: "Pago seguro", processing: "Procesando", done: "¡Listo!" };
+    document.getElementById("checkout-title").textContent = titles[step];
+    document.getElementById("checkout-close").style.display = (step === "processing" || step === "done") ? "none" : "";
+    const t = fmtCLP(getTotal());
+    ["form-total", "webpay-total", "pay-amount", "success-total"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = t;
+    });
+  }
+
+  function resetCheckout() {
+    ["co-name","co-email","co-phone","co-card","co-exp","co-cvv"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = "";
+    });
+    document.getElementById("btn-continue").disabled = true;
+    document.getElementById("btn-pay").disabled = true;
+    setStep("form");
+  }
+
+  function goPay()      { setStep("webpay"); }
+  function submitPay()  { setStep("processing"); setTimeout(() => setStep("done"), 1800); }
+  function finishCheckout() { closeCheckout(); items = []; updateBadge(); showToast("¡Compra realizada con éxito!"); }
+
+  function validateForm() {
+    const name  = document.getElementById("co-name").value.trim();
+    const email = document.getElementById("co-email").value;
+    const phone = document.getElementById("co-phone").value.trim();
+    document.getElementById("btn-continue").disabled = !(name && email.includes("@") && phone.length >= 8);
+  }
+
+  function validateCard() {
+    const card = document.getElementById("co-card").value.replace(/\s/g, "");
+    const exp  = document.getElementById("co-exp").value;
+    const cvv  = document.getElementById("co-cvv").value;
+    document.getElementById("btn-pay").disabled = !(card.length >= 12 && exp.length >= 4 && cvv.length >= 3);
+  }
+
+  function formatCard(el) {
+    el.value = el.value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ");
+    validateCard();
+  }
+
+  function formatExp(el) {
+    let d = el.value.replace(/\D/g, "").slice(0, 4);
+    if (d.length >= 3) d = d.slice(0, 2) + "/" + d.slice(2);
+    el.value = d;
+    validateCard();
+  }
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    document.getElementById("toast-msg").textContent = msg;
+    document.getElementById("toast").classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => document.getElementById("toast").classList.remove("show"), 2400);
+  }
+
+  /* ── Navbar scroll ── */
+  window.addEventListener("scroll", () => {
+    document.getElementById("nav").classList.toggle("scrolled", window.scrollY > 80);
+  }, { passive: true });
+</script>
+</body>
+</html>
