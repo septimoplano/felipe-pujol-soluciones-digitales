@@ -908,6 +908,11 @@
 
   checkPaymentReturn();
 
+  // Si el usuario vuelve atrás desde Flow, cierra el modal
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) closeCheckout();
+  });
+
   /* ── Toast ── */
   function showToast(msg) {
     document.getElementById("toast-msg").textContent = msg;
