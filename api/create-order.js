@@ -28,6 +28,7 @@ module.exports = async (req, res) => {
     currency:        "CLP",
     amount:          String(amount),
     email,
+    optional:        JSON.stringify({ name, phone }),
     urlConfirmation: `${SITE_URL}/api/confirm`,
     urlReturn:       `${SITE_URL}/api/return`,
   };
