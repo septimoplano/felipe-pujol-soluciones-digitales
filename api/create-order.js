@@ -7,6 +7,9 @@ const FLOW_BASE    = process.env.FLOW_ENV === "production"
   ? "https://www.flow.cl/api"
   : "https://sandbox.flow.cl/api";
 
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
+
 function sign(params) {
   const keys = Object.keys(params).sort();
   const str  = keys.map(k => k + params[k]).join("");
@@ -28,7 +31,6 @@ module.exports = async (req, res) => {
     currency:        "CLP",
     amount:          String(amount),
     email,
-    optional:        JSON.stringify({ name, phone }),
     urlConfirmation: `${SITE_URL}/api/confirm`,
     urlReturn:       `${SITE_URL}/api/return`,
   };
@@ -45,6 +47,18 @@ module.exports = async (req, res) => {
   const data = await response.json();
 
   if (data.url && data.token) {
+    // Guarda los datos del cliente en Supabase antes de redirigir a Flow
+    await fetch(`${SUPABASE_URL}/rest/v1/pagos`, {
+      method:  "POST",
+      headers: {
+        "apikey":        SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type":  "application/json",
+        "Prefer":        "return=minimal",
+      },
+      body: JSON.stringify({ nombre: name, email, telefono: phone, monto: amount, orden: commerceOrder }),
+    });
+
     return res.json({ redirect: `${data.url}?token=${data.token}` });
   }
 
