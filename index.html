@@ -81,8 +81,8 @@
   .cart-btn {
     position: relative; width: 38px; height: 38px; border-radius: 50%;
     border: 1px solid rgba(13,31,29,.12); background: transparent;
-    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-    transition: background .2s;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background .2s; flex-shrink: 0; line-height: 0;
   }
   .cart-btn:hover { background: rgba(13,31,29,.05); }
   .cart-btn svg { width: 16px; height: 16px; color: var(--ink); }
@@ -407,8 +407,10 @@
   @media (max-width: 640px) {
     .nav { left: 12px; right: 12px; transform: none; padding: 6px 6px 6px 14px; }
     .nav-brand span:not(.nav-dot) { display: none; }
+    .nav-links { display: none; }
     .nav-link { padding: 6px 10px; font-size: 12px; }
-    .btn-cta { padding: 8px 12px; font-size: 12px; }
+    .btn-cta { padding: 8px 12px; font-size: 12px; gap: 6px; }
+    .btn-cta svg:last-child { display: none; }
   }
 </style>
 </head>
@@ -440,7 +442,7 @@
   <div class="hero-inner hero-inner-solo">
     <div class="hero-eyebrow">
       <span class="pulse"></span>
-      Disponible para nuevos proyectos · Mayo 2026
+      Disponible para nuevos proyectos · <span id="avail-month">Mayo 2026</span>
     </div>
     <h1 style="text-align:left">
       ¿Buscas <span class="it">digitalizar</span><br>
@@ -907,6 +909,14 @@
   }
 
   checkPaymentReturn();
+
+  /* ── Mes dinámico en eyebrow ── */
+  (function() {
+    const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    const now = new Date();
+    const el = document.getElementById('avail-month');
+    if (el) el.textContent = months[now.getMonth()] + ' ' + now.getFullYear();
+  })();
 
   // Si el usuario vuelve atrás desde Flow, cierra el modal
   window.addEventListener("pageshow", (e) => {
